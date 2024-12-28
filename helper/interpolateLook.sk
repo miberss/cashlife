@@ -1,0 +1,27 @@
+function interpolateLook(camera: entity, look_at: location, over: timespan):
+	set {_start_yaw} to yaw of {_camera}
+	set {_start_pitch} to pitch of {_camera}
+	
+	set {_target_vector} to vector from {_camera} to {_look_at}
+	set {_end_yaw} to yaw of {_target_vector}
+	set {_end_pitch} to pitch of {_target_vector}
+	
+	loop (ticks of {_over}) times:
+		set {_progress} to (loop-number / ((ticks of {_over})))
+		
+		set {_smooth_progress} to easeInOutCubic({_progress})
+		
+		set {_current_yaw} to {_start_yaw} + ({_end_yaw} - {_start_yaw}) * {_smooth_progress}
+		set {_current_pitch} to {_start_pitch} + ({_end_pitch} - {_start_pitch}) * {_smooth_progress}
+		
+		set yaw of {_camera} to {_current_yaw}
+		set pitch of {_camera} to {_current_pitch}
+		
+		wait 1 tick
+
+
+function easeInOutCubic(x: number) :: number:
+	if {_x} < 0.5:
+		return 4 * {_x} * {_x} * {_x}
+	else:
+		return 1 - ((-2 * {_x} + 2) ^ 3) / 2

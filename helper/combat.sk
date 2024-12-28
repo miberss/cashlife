@@ -1,0 +1,5 @@
+function inCombat(p: entity):: boolean:
+    return whether (unix timestamp of {-combat::%{_p}%} - unix timestamp of now) > 0
+
+function startCombat(p: entity, lasts: timespan):
+    set {-combat::%{_p}%} to {_lasts} after now

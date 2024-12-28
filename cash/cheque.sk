@@ -1,0 +1,42 @@
+options:
+	MAX_CASH_CHEQUE: 100
+
+function createCheque(cash: int):: item:
+	set {_i} to newItem(paper, "cheque")
+	set {_nbt} to custom nbt of {_i}
+	set short tag "custom;cash" of {_nbt} to {_cash}
+	set string tag "custom;uuid" of {_nbt} to random uuid
+	set name of {_i} to "&fCheque"
+	set lore of {_i} to minimessage from "%getCashColor()%$ %{_cash}% $"
+	return {_i}
+
+function redeemCheque(p: player, cheque: item):
+	set {_nbt} to custom nbt of {_cheque}
+	if all:
+		{_cheque} is a paper
+		{_nbt} has tag "custom;cash"
+		target of {_p} is not set
+	then:	
+		set {_cash} to short tag "custom;cash" of {_nbt}
+		addCash({_p}, {_cash})
+		set {_p}'s tool to air
+
+function processCreate(p: player, cash: int, max: int):: boolean:
+	if {_cash} is between 0 and {_max}:
+		if getCash({_p}) > 0:
+			removeCash({_p}, {_cash})
+			return true
+		return false
+	return false
+
+command cheque <int>:
+	trigger:
+		if processCreate(player, arg-1, {@MAX_CASH_CHEQUE}) != true:
+			send "<#f42e43>The maximium amount of cash a cheque can hold is $ {@MAX_CASH_CHEQUE} $" to player
+			stop
+		give player createCheque(arg-1)
+
+on right click:
+	
+	redeemCheque(player, player's tool)
+

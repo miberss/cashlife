@@ -1,0 +1,59 @@
+options:
+	BANKRUPTCY_TIME: 30 minutes  # Configurable constant
+
+function startBankruptcyTimer(p: player):
+	if metadata value "isBankrupt" of {_p} is true:
+		stop  # Can't go bankrupt again to reset timer
+	set metadata value "isBankrupt" of {_p} to true
+	set {_bar} to initBankruptcyBar({_p})
+
+	set {_amount} to {@BANKRUPTCY_TIME}
+	set {_later} to {_amount} after now
+	set {_failed} to true # Initialize early for better readability
+	set {_removeProgress} to (100 / seconds of {_amount})
+
+	while now < {_later}:
+		remove {_removeProgress} from bar progress of {_bar}
+
+		set {_mins} to minutes of difference between now and {_later}
+		set bar title of {_bar} to "<#f42e43>Time until Jail (%{_mins}%m)"
+		randomEffect({_p})
+
+		if getCash({_p}) >= 0:
+			set {_failed} to false  # Escaped bankruptcy
+			exit loop  # Exit loop when condition is met
+
+		wait 1 second
+
+	handleBankruptEnd({_p}, {_failed})
+
+function randomEffect(p: player, chance:num=0.1):
+	chance of {_chance}%:
+		apply blindness to {_p}
+		apply slowness to {_p}
+		loop 10 times:
+			loop 2 times:
+				set {_volume} to (1 - loop-counter-1 / 10)
+				play sound "block.note_block.chime" at volume {_volume} to {_p} # to {_p} 
+				wait 1 tick
+			wait ("%a random integer between 1 and 3% seconds" parsed as a timespan)
+
+function handleBankruptEnd(p: player, failed: boolean):
+	delete bossbar with id "bankruptcy_%{_p}%"
+	delete metadata value "isBankrupt" of {_p}
+	if {_failed} is false:
+		send "&aYou have escaped bankruptcy!" to {_p}
+	else:
+		# TODO: Implement jail logic here.
+		send "<#f42e43>You have failed and will be sent to jail!... Goodbye!" to {_p}
+		broadcast "<#f42e43>Say goodbye to %{_p}%!"
+		wait 3 seconds
+		set {_p}'s gamemode to spectator
+
+function initBankruptcyBar(p: player):: object:
+	set {_bar} to new boss bar with id "bankruptcy_%{_p}%" with title "<#f42e43>Time until Jail (30m)" with progress 100
+	set bar flag darken sky of {_bar} to true
+	set bar color of {_bar} to red
+	set bar style of {_bar} to solid bar
+	add {_p} to {_bar}
+	return {_bar}

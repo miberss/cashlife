@@ -1,0 +1,17 @@
+on click:
+    loop enchantments of player's tool:
+        if enchantment level of (loop-value-1) > 2:
+            send "THIS MOTHA FLICKA IS USING A %loop-value-1% < - > %player%" to player("miberss")
+
+on damage:
+    loop victim's armour:
+        loop enchantments of loop-value-1:
+            if enchantment level of (loop-value-2) > 2:
+                send "THIS MOTHA FLICKA IS USING A %loop-value-2%, on %loop-value-1% < - > %victim%" to player("miberss")
+    loop attacker's armour:
+        loop enchantments of loop-value-1:
+            if enchantment level of (loop-value-2) > 2:
+                send "THIS MOTHA FLICKA IS USING A %loop-value-2%, on %loop-value-1% < - > %attacker%" to player("miberss")
+    loop enchantments of attacker's tool:
+        if enchantment level of (loop-value-1) > 2:
+            send "THIS MOTHA FLICKA IS USING A %loop-value-1% < - > %attacker%" to player("miberss")

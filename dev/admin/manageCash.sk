@@ -1,0 +1,16 @@
+command cash [<player>] [<string>] [<int>]:
+	permission: op
+	trigger:
+		switch arg-2:
+			case "set":
+				setCash(arg-1, arg-3)
+			case "remove":
+				removeCash(arg-1, arg-3)
+			case "add":
+				addCash(arg-1, arg-3)
+			default:
+				set {_cash} to text component from formatCash(arg-1)
+				send "<#e53448>[⛨] <#e6e6ed>%arg-1% has <reset>%{_cash}%"
+
+on tab complete of "/cash":
+	set tab completion of position 2 to "set","remove","add"

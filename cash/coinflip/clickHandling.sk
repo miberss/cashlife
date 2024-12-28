@@ -1,0 +1,22 @@
+on player interact on entity:
+	if all:
+		metadata "coinflip;request" of entity is set
+		player is sneaking
+	then:
+		set {_amount} to metadata "coinflip;amount" of entity
+		startCoinFlip(player, {_amount})
+
+
+
+on right click on player:
+	if all:
+
+		player is sneaking
+		inCombat(player) = false
+		inCombat(event-entity) = false
+		isCooldownOver(player, "coinflip", true) = true
+		getCash(player) > 0
+		getCash(event-entity) > 0
+
+	then:
+		sendCoinFlipRequest(event-entity, player, 10% of getCash(player))

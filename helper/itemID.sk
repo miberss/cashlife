@@ -1,0 +1,19 @@
+function hasID(obj: object, id: string):: boolean:
+	if {_obj} is a item:
+		return whether string tag "custom;id" of custom nbt of {_obj} = {_id}
+	return whether string tag "custom;id" of nbt of {_obj} = {_id}
+
+function setID(obj: object, id: string):
+	if {_obj} is a item:
+		set string tag "custom;id" of custom nbt of {_obj} to {_id}
+	else:
+		set string tag "custom;id" of nbt of {_obj} to {_id}
+
+function getID(obj: object):: string:
+	if {_obj} is a item:
+		return string tag "custom;id" of custom nbt of {_obj}
+	return string tag "custom;id" of nbt of {_obj}
+
+function newItem(item: itemtype, id: string):: item:
+	set string tag "custom;id" of custom nbt of {_item} to {_id}
+	return {_item}

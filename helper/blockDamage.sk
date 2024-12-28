@@ -1,0 +1,23 @@
+function getBlastRes(i: itemtype):: num:
+  set {_material} to {_i}.getMaterial()
+  return {_material}.getBlastResistance() if ({_material}.isBlock() is true) else {_null}
+
+function setBlockProtection(block: block, owner: player, dura: number = {_}):
+	set {_hardness} to hardness of {_block}
+	set {_blastResistance} to getBlastRes({_block})
+	set {_nbt} to nbt of {_block}
+	set {_calc-dura} to round(log({_hardness} * {_blastResistance}) * 60) - 20
+	set {_calc-dura} to clamp({_dura}, 10, 300)
+
+	set float tag "custom;initialDurability" of {_nbt} to {_dura} ? {_calc-dura}
+	set float tag "custom;currentDurability" of {_nbt} to {_dura} ? {_calc-dura}
+	set string tag "custom;owner" of {_nbt} to {_owner}'s uuid
+
+function getBlockDurability(b: block):: num:
+	return float tag "custom;currentDurability" of (nbt of {_b})
+
+function removeBlockDurability(float: num, b: block):
+	remove {_float} from float tag "custom;currentDurability" of (nbt of {_b})
+
+function getInitialDurability(b: block):: num:
+	return float tag "custom;initialDurability" of (nbt of {_b})

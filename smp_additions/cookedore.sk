@@ -1,0 +1,14 @@
+on script load:
+	clear {-smelted::*}
+	set {-smelted::minecraft:raw_iron} to iron ingot
+	set {-smelted::minecraft:raw_gold} to gold ingot
+	set {-smelted::minecraft:raw_copper} to copper ingot
+	set {-smelted::minecraft:raw_copper_block} to copper block
+	set {-smelted::minecraft:raw_gold_block} to gold block
+	set {-smelted::minecraft:raw_iron_block} to iron block
+
+on block drop item:
+	loop event-entities:
+		set {_key} to mc key of (item of loop-entity)
+		{-smelted::%{_key}%} is set
+		set item of loop-entity to {-smelted::%{_key}%}

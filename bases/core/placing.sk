@@ -1,0 +1,44 @@
+on block place:
+	if hasID(custom nbt of tool, "core") = true:
+		placeCore(player, event-block, event)
+
+function placeCore(p: player, block: block, event: event):
+
+	{_event} is not cancelled
+
+	set {_chunk} to chunk at {_block}
+
+	if getChunkCore({_chunk}) is set:
+		{_event}.setCancelled(true)
+		coreInfo("chunk_claimed", {_block})
+
+	else if getPlayerChunk({_p}) is set:
+		{_event}.setCancelled(true)
+		coreInfo("already_claimed", {_block})
+
+	else if notInMiddle({_block}) is false:
+		{_event}.setCancelled(true)
+		coreInfo("middle_chunk", {_block})
+
+	else:
+		coreInfo("success_place", {_block})
+		setClaimData({_p}, {_chunk}, {_block})
+		
+		setID({_block}, "core")
+
+		startRent({_block})
+		wait 1 second
+		createRentDisplay({_p}, ({_block} ~ vector(0,1,0)), {_block})
+
+local function notInMiddle(b: block):: boolean:
+	set {_chunk} to chunk at {_b}
+	set {_relative} to vector((chunk x of {_chunk} * 16), 0, (chunk z of {_chunk} * 16)) + vector(0.5,0.5,0.5)
+	set {_loc} to {_b} ~ ({_relative} * -1)
+	if all:
+		x coord of {_loc} is between 5 and 11
+		y coord of {_loc} is between 63 and 163
+		z coord of {_loc} is between 5 and 11
+	then:
+		return true
+	else:
+		return false

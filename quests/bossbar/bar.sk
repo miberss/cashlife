@@ -1,0 +1,13 @@
+function initQuestBar(p: player, reward: int, dif: int, rar: string):
+	remove {_p} from boss bar with id "quest_%{_p}%" 
+	delete boss bar with id "quest_%{_p}%"
+	set {_bar} to new boss bar with id "quest_%{_p}%" with title getQuestDescription({_p}) with progress 0
+	set bar color of {_bar} to blue
+	set bar style of {_bar} to solid bar
+	add {_p} to {_bar}
+
+function updateQuestBar(p: player, current: int, end: int):
+	set {_bar} to boss bar with id "quest_%{_p}%"
+	set {_cash} to getQuestReward({_p})
+	set bar progress of {_bar} to (({_current}) / ({_end})) * 100
+	set bar title of {_bar} to "%getQuestDescription({_p})% ↔ <#8686e5>[%{_current}% / %{_end}%] %getCashColor()%%{_cash}%"

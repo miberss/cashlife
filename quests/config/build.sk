@@ -1,0 +1,103 @@
+on script load:
+	delete {-rarity::*}
+	rarityBuilder("COMMON", 	"#476590", 	"COMMON",	 	0,  	70,			1)
+	rarityBuilder("UNCOMMON", 	"#3ece1a", 	"UNCOMMON", 	50,  	50,			1.3)
+	rarityBuilder("RARE", 		"#119bd6", 	"RARE", 		200,  	30,			1.6)
+	rarityBuilder("EPIC", 		"#d9386a", 	"EPIC", 		300,  	10,			1.9)	
+	rarityBuilder("LEGENDARY", 	"#feba43", 	"LEGENDARY", 	300,  	1,			3)	
+
+
+	delete {-difficulty::*}
+	difficultyBuilder(0, 30,  (fall_one_cm, sprint_one_cm, swim_one_cm, 								mine_block, craft_item, kill_entity))
+	difficultyBuilder(1, 50,  (fall_one_cm, sneak_time, swim_one_cm, crouch_one_cm,						mine_block, craft_item, kill_entity))
+	difficultyBuilder(2, 70,  (boat_one_cm, item_enchanted, 											mine_block, craft_item, kill_entity))
+	difficultyBuilder(3, 120, (fish_caught, horse_one_cm, item_enchanted,								mine_block, craft_item, kill_entity))
+	difficultyBuilder(4, 250, (fish_caught, item_enchanted,							 					mine_block, craft_item, kill_entity))
+	difficultyBuilder(5, 400, (animals_bred, cake_slices_eaten, pig_one_cm, walk_under_water_one_cm,	mine_block, craft_item, kill_entity))
+
+	delete {-stat::*}
+
+	statBuilder(fall_one_cm, 				"All falls down", 						"Fall for [numberdistance]", 				7000)
+	statBuilder(sprint_one_cm, 				"RUNNIN'",								"Sprint for [numberdistance]", 				70000)
+	statBuilder(swim_one_cm, 				"SWIMMIN'",								"Swim for [numberdistance]", 				40000)
+
+	statBuilder(fall_one_cm, 				"'Yo, can you test the fall damage?'",	"Fall for [numberdistance]", 				10000)
+	statBuilder(swim_one_cm, 				"Subnautica",							"Swim for [numberdistance]", 				60000)
+	statBuilder(sneak_time, 				"Sneaky Snitch",						"Sneak around for [number] ticks (20th of a second).", 70 * 20)
+	statBuilder(crouch_one_cm, 				"Assassin's need",						"To crouch for [numberdistance]", 			10000)
+
+	statBuilder(boat_one_cm, 				"Raft", 								"Row your boat for [numberdistance]", 		120000)
+	statBuilder(item_enchanted, 			"Chanting", 							"Enchant [number] items.", 					2)
+		
+	statBuilder(fish_caught, 				"Get your Fiberglass fishing rod",		"and catch [number] fish.", 				8)
+	statBuilder(horse_one_cm, 				"Hoarse Dirt", 							"Ride a horse for [numberdistance]", 		400000)
+	statBuilder(item_enchanted, 			"Dark souls n shit", 					"Enchant [number] items.", 					4)
+
+	statBuilder(fish_caught,				"Angler", 								"Catch [number] fish.", 					20)
+	statBuilder(item_enchanted, 			"Magic Gear", 							"Enchant [number] items.", 					8)
+# i have to brb for nachos $$$$
+	statBuilder(animals_bred, 				"BREED, BREED, BREED", 					"Breed [number] animals.", 					25)
+	statBuilder(cake_slices_eaten,			"cake... cake.. cake.", 				"Eat [number] cake slices.", 				20)
+	statBuilder(pig_one_cm, 				"Hog Rida!!!", 							"Ride a pig for [numberdistance]", 			150000)
+	statBuilder(walk_under_water_one_cm, 	"'Yo, can you test the drown damage?'",	"Walk underwater for [numberdistance]", 	70000)
+
+
+	statBuilder( mine_block, "Rock and Stone!... and wood", "Dig up [number] [value].")
+
+	addStatExtra(mine_block, stone, 				0, 100)
+	addStatExtra(mine_block, andesite, 				1, 50)
+	addStatExtra(mine_block, dirt, 					0, 200)
+	addStatExtra(mine_block, tuff, 					2, 100)
+	addStatExtra(mine_block, andesite, 				1, 50)
+	addStatExtra(mine_block, oak log,				4, 200)
+	addStatExtra(mine_block, birch log,				3, 60)
+	addStatExtra(mine_block, iron ore, 				2, 50)
+	addStatExtra(mine_block, diamond ore,			5, 5)
+
+
+	statBuilder( craft_item, "Quick!! Craft!!", "Craft [number] [value].")
+
+	addStatExtra(craft_item, sticks, 				0, 200)	
+	addStatExtra(craft_item, flower pot, 			0, 3)
+	addStatExtra(craft_item, pink dye,				1, 5)
+	addStatExtra(craft_item, golden carrot, 		2, 3)
+	addStatExtra(craft_item, tnt,					3, 3)
+	addStatExtra(craft_item, golden apple, 			3, 5)
+	addStatExtra(craft_item, dispenser, 			4, 5)
+	addStatExtra(craft_item, candle, 				4, 3)
+	addStatExtra(craft_item, anvil, 				5, 2)
+	addStatExtra(craft_item, chest, 				5, 100)
+
+
+	statBuilder( use_item, "Hey... use that thing", "Use [number] [value].")
+
+	addStatExtra(use_item, golden apple, 							5, 10)
+	addStatExtra(use_item, iron hoe, 								4, 500)
+	addStatExtra(use_item, ("ender pearl" parsed as an itemtype),	3, 3)
+	addStatExtra(use_item, (cooked beef),							2, 20)
+	addStatExtra(use_item, (flint and steel), 						1, 32)
+	addStatExtra(use_item, rotten flesh, 							0, 1)
+
+
+
+	statBuilder( kill_entity, "KILL! MURDER! KILL! MURDER!", "Kill [number] [value].")
+	addStatExtra(kill_entity, a zombie, 		0, 7)
+	addStatExtra(kill_entity, a skeleton, 		0, 7)
+	addStatExtra(kill_entity, a salmon, 		0, 10)
+
+	addStatExtra(kill_entity, a pig,			1, 17)
+	addStatExtra(kill_entity, a cow, 			1, 15)
+	addStatExtra(kill_entity, a cod, 			1, 15)
+
+	addStatExtra(kill_entity, a chicken, 		2, 15)
+	addStatExtra(kill_entity, a pillager, 		2, 2)
+	addStatExtra(kill_entity, a enderman, 		2, 1)
+
+	addStatExtra(kill_entity, a spider, 		3, 20)
+	addStatExtra(kill_entity, a sheep, 			3, 30)
+	addStatExtra(kill_entity, a phantom, 		3, 3)
+
+	addStatExtra(kill_entity, a witch, 			4, 5)
+	addStatExtra(kill_entity, a creeper,		4, 30)
+
+	addStatExtra(kill_entity, a cave spider, 	5, 50)

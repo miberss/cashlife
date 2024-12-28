@@ -1,0 +1,6 @@
+import:
+    io.papermc.paper.entity.TeleportFlag$EntityState
+    
+effect teleport %entity% to %location% with passengers:
+    trigger:
+        expr-1.teleport(expr-2, EntityState.RETAIN_PASSENGERS)

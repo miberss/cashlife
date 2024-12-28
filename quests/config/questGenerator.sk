@@ -1,0 +1,80 @@
+function generateQuest():: item:
+	set {_rar} to getRandomRarity()
+	set {_dif} to random element of getAllDifficulties() parsed as an int
+	set {_stat} to random element of getDifficultyStats({_dif})
+	if hasStatExtra({_stat}) = true:
+		set {_id} to random element of getAllStatExtra({_stat}, {_dif})
+		set {_value} to getStatExtraValue({_stat}, {_id})
+		set {_statamount} to getStatExtraBase({_stat}, {_id})
+		set {_statamount} to {_statamount} + getRarityStatMult({_rar})
+		set {_statamount} to round({_statamount} * random number between 1 and 1.2) 
+		
+	set {_statamount} to {_statamount} + calculateStatMult({_stat}, {_rar})
+	
+	set {_reward} to calculateCash({_rar},{_dif})
+	set {_item} to creeper banner pattern with all item flags
+
+	set {_description} to formatDescription({_stat}, {_statamount}, {_value})
+
+	set {_reward-lore} to minimessage from " %getCashMini()%$ %{_reward}% $"
+
+	
+	set {_stars} to createStars({_dif})
+	set {_difficulty} to minimessage from getDifficultyTransition({_dif} / 5, {_stars})
+
+	new string stored in {_lore}:
+		getDifficultyTransition({_dif} / 5, {_stars})
+		""
+		"%{_description}%"
+		"                                       "
+		"%{_reward-lore}%"
+		""
+		"%getRarity({_rar})%"
+
+	set {_item}'s lore to {_lore}
+	
+	set {_item}'s name to minimessage from "<color:%getRarityColor({_rar})%>%getStat({_stat})%"
+	
+	set {_n} to custom nbt of {_item} 
+
+	set int tag "custom;difficulty" of {_n} to {_dif} 
+	set string tag "custom;rarity" of {_n} to {_rar}
+	set int tag "custom;reward" of {_n} to {_reward}
+
+	set int tag "custom;statamount" of {_n} to {_statamount} 
+	set string tag "custom;stat" of {_n} to "%{_stat}%"
+	set string tag "custom;value" of {_n} to {_id}
+
+	return {_item}
+
+
+function formatDescription(stat: statistic, statamount: int, value: object):: text component:
+	set {_description} to minimessage from " <color:#e6e6ed>%getStatDescription({_stat})%"
+	
+	replace first "[numberdistance]" in {_description} with "<color:#8686e5>%distConverter({_statamount}, "cm", "km")%<color:#e6e6ed>"
+	replace first "[number]" in {_description} with "<color:#8686e5>%{_statamount}%<color:#e6e6ed>"
+	replace first "[value]" in {_description} with "<color:#8686e5>%{_value}%<color:#e6e6ed>"
+
+	return text component from minimessage from "<color:#e6e6ed>%raw {_description}%"
+
+command /generateQuests [<int>]:
+	permission: op
+	trigger:
+		loop arg-1 ? 1 times:
+			give player generateQuest()
+
+###
+	if all:
+		{_value} is not set
+		hasStatExtra({_stat}) = true
+	then:
+		debug {_value} to {_p}
+		debug {_stat} to {_p}
+		debug {_id} to {_p}
+		debug {_dif} to {_p}
+		stop
+
+	else:
+		generateQuest({_p})
+###
+

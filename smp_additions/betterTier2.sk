@@ -1,0 +1,35 @@
+###
+Strength II can now be made to
+8 minutes long with
+1 1:30 Strength II Potion
+1 redstone
+###
+
+on script load:
+    set {_potion} to potion named "&fPotion of Strength"
+    add potion effect of strength 2 for 8 minutes to potion effects of {_potion}
+
+    register shaped recipe:
+        id: "custom:long_strong_strength"
+        result: {_potion}
+        shape: " a ", "aba", " a "
+        category: "brewing"
+        ingredients:
+            set ingredient of "a" to redstone block
+            set ingredient of "b" to getPotion(potion, "strong_strength")
+
+    set {_potion} to splash potion named "&fSplash Potion of Strength"
+    add potion effect of strength 2 for 8 minutes to potion effects of {_potion}
+
+    register shaped recipe:
+        id: "custom:splash_long_strong_strength"
+        result: {_potion}
+        shape: " a ", "aba", " a "
+        category: "brewing"
+        ingredients:
+            set ingredient of "a" to redstone block
+            set ingredient of "b" to getPotion(splash potion, "strong_strength")
+
+function getPotion(potion: itemtype, tag: string):: item:
+    set string tag "minecraft:potion_contents;potion" of nbt of {_potion} to {_tag}
+    return {_potion}

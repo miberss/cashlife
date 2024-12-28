@@ -1,0 +1,76 @@
+Tracker Compass
+Points to the nearest player, if there isn't any, show an error.
+Update every tick, to show the correct location.
+Has a filter so you don't track your teammates.
+###
+
+# Recipe
+
+on script load:
+    set {_item} to newItem(compass, "tracker") 
+    enchant {_item} with riptide 1
+    set {_item}'s name to "<#b886e5>↑ Tracker Compass ↑"
+    set {_item}'s lore to "", "<#e6e6ed><i> Points to the nearest", "<#e6e6ed><i> player."
+    set {_item} to {_item} with item flag hide_enchants
+    register shaped recipe:
+        id: "custom:tracker_compass"
+        result: {_item}
+        category: "utilities"
+        shape: "cac", "aba", "cac"
+        ingredients:
+            set ingredient of "a" to comparator
+            set ingredient of "b" to compass
+            set ingredient of "c" to copper bulb
+
+# Functionality
+
+function getClosestPlayer(p: player) :: player:
+    loop players in world of {_p} where [{trackerCompass::%{_p}%::%input%} is not set]: # Loops through players and compares distance.
+        loop-player != {_p}
+        set {_diff} to distance between {_p} and loop-player
+        if {_c} is set:
+            if {_diff} < distance between {_p} and {_c}:
+                set {_c} to loop-player
+        else:
+            set {_c} to loop-player
+    return {_c}
+
+function setTrackerLocation(p: player):: player:
+    set {_np} to (getClosestPlayer({_p})) 
+    set {_p}'s compass target to ({_np} ? {_p}'s location) # Tries to set the compass to the nearest player
+    return {_np}
+
+function getRespawn(p: player):: location:
+    return {_player}.getPossibleRespawnLocation() ? spawn of world of {_player}
+
+# Core update for trackers
+function trackerUpdate(p: players):
+    # Loops players holding a tracker
+    loop ({_p::*}) where [hasID(input's tool, "tracker") = true]: 
+        # Checks for the case that there is only 1 person on the server
+        set {_player} to loop-value 
+        if amount of ({_p::*}) > 1:
+            set {_nearest} to setTrackerLocation(loop-value)
+            send actionbar "<#f42e43>Tracking &n%{_nearest}%
+        else:
+            send actionbar "<#f42e43>You are the &nonly&r<#f42e43> person online, this will point to your spawn point." to {_player}
+            set {_player}'s compass target to getRespawn({_player})
+            # Sends an action bar to inform the player of an error.
+
+every 10 ticks:
+    trackerUpdate(all players)
+
+on right click of a player:
+    hasID(input's tool, "tracker") = true
+    if player is not sneaking:
+        if {trackerCompass::%player%::%event-entity%} is set:
+            send "&cThis player is already included in the tracking filter!" to player
+        else:
+            set {trackerCompass::%player%::%event-entity%} to true
+            send "&aAdded %event-entity% to the tracking filter!" to player
+    else:
+        if {trackerCompass::%player%::%event-entity%} is not set:
+            send "&cThis player is not included in the tracking filter!" to player
+        else:
+            delete {trackerCompass::%player%::%event-entity%}
+            send "&aRemoved %event-entity% from the tracking filter!" to player

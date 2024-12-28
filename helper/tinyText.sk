@@ -1,0 +1,26 @@
+on load:
+    set {_lower} to "abcdefghijklmnopqrstuvwxyz"
+    set {-tiny::*} to "ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘǫʀѕᴛᴜᴠᴡxʏᴢ" split at ""
+    set {-lower::*} to {_lower} split at ""
+    set {-upper::*} to (uppercase {_lower}) split at ""    
+    set {-nums::*} to "1234567890()" split at ""
+    set {-super::*} to "¹²³⁴⁵⁶⁷⁸⁹⁰⁽⁾" split at ""
+    set {-sub::*} to "₁₂₃₄₅₆₇₈₉₀₍₎" split at ""
+
+function stxt(text: text, isSuperscript: boolean = true) :: text component:
+    # Replace the text
+    loop {-tiny::*}:
+        replace {-lower::%loop-index%} and {-upper::%loop-index%} with loop-value in {_text}
+        replace "§%loop-value%" with "§%{-lower::%loop-index%}%" in {_text} # put back color codes
+
+    # Superscript or subscript
+    if {_isSuperscript} is true:
+        loop {-super::*}:
+            replace {-nums::%loop-index%} with loop-value in {_text}
+            replace "§%loop-value%" with "§%{-lower::%loop-index%}%" in {_text} # put back color codes
+    else:
+        loop {-sub::*}:
+            replace {-nums::%loop-index%} with loop-value in {_text}
+            replace "§%loop-value%" with "§%{-lower::%loop-index%}%" in {_text} # put back color codes
+
+    return minimessage from {_text}

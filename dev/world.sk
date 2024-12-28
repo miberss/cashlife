@@ -1,0 +1,33 @@
+on skript start:
+  delete world file for "cash"
+  set {_w} to world creator named "cash"
+  set {-gen} to new voronoi generator
+  set frequency of {-gen} to 0.02
+  set fractal type of {-gen} to FBm
+  set octaves of {-gen} to 6
+  set gain of {-gen} to 0.5
+  set chunk generator of {_w} to chunk generator with id "cash"
+  load world from creator {_w}
+  set {-teleport} to location(0,73,0,world "cash")
+
+register chunk generator with id "cash":
+  chunk gen:
+    loop 16 times:
+      loop 16 times:
+        set {_x} to (loop-number-1) - 1
+        set {_z} to (loop-number-2) - 1
+        set {_al} to vector({_x} + (chunkdata chunk x * 16), 1, {_z} + (chunkdata chunk z * 16))
+        set {_value} to abs(value of {-gen} at {_al}.x, {_al}.y, {_al}.z)
+        set {_block} to white_wool[] if {_value} > 0.7 else orange_wool[]
+
+        set {_fl} to vector({_x}, 65 + {_value} * 5, {_z})
+
+        set chunkdata blocks within vector({_x}, 65, {_z}) and {_fl} to {_block}
+
+function sig(n: number):: number:
+  return 1 / (2.718^({_n} * -1))
+
+on join:
+  teleport player to {-teleport}
+  delete {-teleport}
+

@@ -1,0 +1,58 @@
+function getDurabilityTransition(p: number, str: string):: text component:
+	return text component from minimessage from "<transition:#f22a39:#f2832a:#f9b741:#a4b13e:#5d833a:%{_p}%>%{_str}%"
+
+on block break:
+	set {_owner} to getChunkOwner(chunk at event-block)
+	if all:
+		{_owner} is set
+		{_owner} is not player
+	then:
+		set {_dura} to getBlockDurability(event-block)
+
+		if attemptBreak(player, event-block, {_dura}) = false:
+			cancel event
+
+			if isCooldownOver({_owner},"breakmessage",true) = true:
+				send actionbar "<#f42e43>⁂ <#e6e6ed>This <#e5533a>CLAIM<#e6e6ed> is owned by <#8686e5>%{_owner}% <#f42e43>⁂ " to player
+				send actionbar "<#f42e43>⁂ <#e6e6ed>Blocks in your <#e5533a>CLAIM<#e6e6ed> are being broken by <#8686e5>%player% <#f42e43>⁂ " to {_owner}
+				createCooldown({_owner},"breakmessage", 8 seconds)
+
+			else:
+				{_dura} is set
+				breakOutcome(player, event-block, {_dura})
+				if hasID(event-block, "core") = true:
+					updateRentDisplay(event-block, getRentDisplay({_owner}))
+					send actionbar "<#f42e43>⁂ <#e6e6ed>Your <#e5533a>CORE<#e6e6ed> is being broken by <#8686e5>%player% <#f42e43>⁂ " to {_owner}
+		else:
+			if hasID(event-block, "core") = true:
+				deleteClaimData({_owner}, chunk at event-block)
+				removeRentDisplay({_owner}, event-block ~ vector(0,1,0))
+
+function breakOutcome(breaker: player, block: block, dura: num):
+	set {_initial-dura} to getInitialDurability({_block})
+	set {_ratio} to ({_dura}) / ({_initial-dura}) 
+	set {_message-dura} to getDurabilityTransition({_ratio}, "%{_dura}%")
+	send actionbar "<#f42e43>⁂ <#e6e6ed>This block's durability<#e6e6ed> is at <#8686e5>[%{_message-dura}% | %{_initial-dura}%<#8686e5>] <#f42e43>⁂ " to {_breaker}
+
+on block place:
+	set {_owner} to getChunkOwner(chunk at event-block)
+	{_owner} is set
+	if {_owner} is not player:
+		cancel event
+		send actionbar "<#f42e43>⁂ <#e6e6ed>This <#e5533a>CLAIM<#e6e6ed> is owned by <#8686e5>%{_owner}% <#f42e43>⁂ " to player
+	else:
+		if hasID(event-block, "core") != true:
+			setBlockProtection(event-block, player)
+		else:
+			setBlockProtection(event-block, player, 2000)
+
+
+function attemptBreak(breaker: player, block: block, dura: number):: boolean:
+	set {_removed-dura} to 2 * clamp(damage of {_breaker}'s tool,1,6)
+	removeBlockDurability({_removed-dura}, {_block})
+	remove ({_removed-dura} / 2) from {_breaker}'s tool's durability
+	if {_dura} <= 0:
+		break {_block} naturally
+		return true
+	else:
+		return false

@@ -1,0 +1,10 @@
+###
+Unstable Enderchests
+Drops all enderchest loot upon death.
+###
+
+on death:
+    attacker is a player
+    loop all items in the victim's enderchest:
+        add loop-value to drops
+        remove loop-value from victim's enderchest

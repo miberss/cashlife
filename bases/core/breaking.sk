@@ -1,0 +1,22 @@
+on block break:
+	if hasID(event-block, "core") = true:
+		breakCore(player, event-block, event) 
+
+function breakCore(p: player, block: block, event: event):
+	
+	{_event} is not cancelled
+	
+	set {_chunk} to chunk at {_block}
+
+	if getChunkOwner({_chunk}) is not {_p}:
+		{_event}.setCancelled(true)
+
+	else:
+
+		addCash({_p},getStoredCash({_block}))
+		deleteClaimData({_p},{_chunk})
+		removeRentDisplay({_p},{_block} ~ vector(0,1,0))
+		coreInfo("success_removed", {_block})
+		removeCash({_p},50)
+
+

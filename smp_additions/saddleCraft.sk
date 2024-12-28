@@ -1,0 +1,29 @@
+on script load:
+    register shaped recipe:
+        id: "custom:saddle"
+        result: saddle
+        category: "utilities"
+        shape: "aaa", "b b", "   "
+        ingredients:
+            set ingredient of "a" to leather
+            set ingredient of "b" to iron ingot
+
+    register shaped recipe:
+        id: "custom:tnt"
+        result: tnt
+        category: "utilities"
+        shape: "aca", "bab", "aca"
+        ingredients:
+            set ingredient of "a" to sand
+            set ingredient of "b" to gunpowder
+            set ingredient of "c" to paper
+
+    register shaped recipe:
+        id: "custom:lead"
+        result: lead
+        category: "utilities"
+        shape: "aaa", "aaa", "aaa"
+        ingredients:
+            set ingredient of "a" to sand
+            set ingredient of "b" to gunpowder
+            set ingredient of "c" to paper

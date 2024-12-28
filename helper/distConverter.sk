@@ -1,0 +1,15 @@
+on script load:
+	set {-units::mm} to 0.001
+	set {-units::cm} to 0.01
+	set {-units::m} to 1
+	set {-units::km} to 1000
+
+function distConverter(value: number, from: string, to: string):: string:
+	if indexes of {-units::*} doesn't contain {_from} or {_to}:
+		return "Invalid units. Please use 'mm', 'cm', 'm', or 'km'."
+    
+	set {_valueInMeters} to {_value} * {-units::%{_from}%}
+    
+	set {_convertedValue} to {_valueInMeters} / {-units::%{_to}%}
+
+	return "%{_convertedValue}%%{_to}%"

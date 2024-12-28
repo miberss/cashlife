@@ -1,0 +1,46 @@
+
+function getCashColor():: string:
+	return "<#3e9c35>"
+
+function getCashMini():: text component:
+    return text component from "<color:#3e9c35>"
+
+function getDebtMini():: text component:
+    return text component from "<color:#f42e43>"
+
+function setCash(p: offlineplayer, cash: number):
+    set int tag "custom;cash" of nbt of {_p} to {_cash}
+    onUpdateCash({_p})
+
+function removeCash(p: offlineplayer, cash: number):
+    remove {_cash} from int tag "custom;cash" of nbt of {_p}
+    onUpdateCash({_p})
+
+function addCash(p: offlineplayer, cash: number):
+    add {_cash} to int tag "custom;cash" of nbt of {_p} 
+    onUpdateCash({_p})
+
+function onUpdateCash(p: offlineplayer):
+    set {_cash} to getCash({_p})
+    updateDisplay({_p})
+    if {_cash} < 0:
+        startBankruptcyTimer({_p})
+
+function getCash(p: offlineplayer):: number:
+    return int tag "custom;cash" of nbt of {_p}
+
+function formatCash(p: player, cash: number = {_}):: text component:
+    set {_cash} to {_cash} ? getCash({_p})
+    set {_color} to getCashMini()
+    if {_cash} < 0:
+        set {_color} to getDebtMini()
+    
+    return minimessage from "%{_color}%$ %{_cash}% $"
+
+on death:
+    victim is a player
+    set {_vcash} to getCash(victim)
+    removeCash(victim, 50 + (20% of {_vcash}))
+    removeDisplay(victim)
+    attacker is a player
+    addCash(attacker, 50 + (20% of {_vcash}))

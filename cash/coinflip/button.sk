@@ -1,0 +1,37 @@
+function createButton(p: player, sender: player, amount: int):
+	
+	set {_loc} to {_p}'s eyes
+
+	spawn interaction at {_loc} ~ vector(0,-0.5,0):
+		set interaction height of entity to -0.5
+
+		set {_i} to entity
+	set metadata "coinflip;amount" of {_i} to {_amount}
+
+	set {_amount} to formatCash({_p}, {_amount})
+
+	set {_t} to minimessage from "<br><color:#8686e5>%{_sender}% <color:#e6e6ed>sent you a coin flip request for %{_amount}%. Shift click to accept!<br>"
+
+	run function textDisplay and store it in {_d}: 
+		location: block at {_loc}
+		text: {_t}
+		linewidth: 120
+		translation: vector(0, -1, -2)
+		billboard: vertical
+		seethrough: true
+		
+	make {_d} ride {_i}
+	make {_i} ride getDisplay({_p})
+	wait 1 tick
+	set metadata "coinflip;request" of {_i} to {_sender}
+	
+	make ({_d} and {_i}) disappear from (all players where [input != {_p}])
+	run 10 seconds later:
+		kill {_i}
+		kill {_d}
+
+function removeButton(p: player):
+	set {_interaction} to 1st element of passenger of getDisplay({_p})
+	set {_sender} to metadata "coinflip;request" of {_interaction}
+	kill passengers of {_interaction}
+	kill {_interaction}

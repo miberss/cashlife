@@ -1,0 +1,57 @@
+function setQuest(p: player, reward: int, statamount: int, rarity: string, difficulty: int, stat: statistic, value: object = {_}):
+	set {activeQuest::%{_p}%::reward} to {_reward}
+	set {activeQuest::%{_p}%::statamount} to {_statamount}
+	set {activeQuest::%{_p}%::stat} to {_stat}
+	set {activeQuest::%{_p}%::difficulty} to {_difficulty}
+	set {activeQuest::%{_p}%::rarity} to {_rarity}
+	set {activeQuest::%{_p}%::description} to 3rd line of lore of {_p}'s tool
+	
+	
+	if {_value} is set:
+		set {activeQuest::%{_p}%::value} to {_value}
+		set {activeQuest::%{_p}%::start} to {_stat} stat using {_value} of {_p}
+		
+	else:
+		set {activeQuest::%{_p}%::start} to {_stat} stat of {_p}
+	
+	set {activeQuest::%{_p}%::end} to {activeQuest::%{_p}%::start} + {_statamount}
+
+	initQuestBar({_p}, {_difficulty}, {_rarity}, {_reward})
+	
+
+function hasActiveQuest(p: player):: boolean:
+	return whether ((size of (indexes of {activeQuest::%{_p}%::*})) > 0)
+
+function deleteQuest(p: player):
+	delete {activeQuest::%{_p}%::*}
+	remove {_p} from bossbar with id "quest_%{_p}%"
+
+
+
+function getQuestDescription(p: player):: string:
+	return {activeQuest::%{_p}%::description}
+
+function getQuestReward(p: player):: integer:
+	return {activeQuest::%{_p}%::reward}
+
+function getQuestStatAmount(p: player):: integer:
+	return {activeQuest::%{_p}%::statamount}
+
+function getQuestStat(p: player):: statistic:
+	return {activeQuest::%{_p}%::stat}
+
+function getQuestStatValue(p: player):: object:
+	return {activeQuest::%{_p}%::value}
+
+function getQuestDifficulty(p: player):: integer:
+	return {activeQuest::%{_p}%::difficulty}
+
+function getQuestRarity(p: player):: string:
+	return {activeQuest::%{_p}%::rarity}
+
+function getQuestStatStart(p: player):: integer:
+	return {activeQuest::%{_p}%::start}
+
+function getQuestStatEnd(p: player):: integer:
+	return {activeQuest::%{_p}%::end}
+

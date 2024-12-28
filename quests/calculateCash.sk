@@ -1,0 +1,5 @@
+function calculateCash(rarity: string, difficulty: int):: int:
+	set {_rarity} to getRarityCash({_rarity}) ? 0
+	set {_difficulty} to getDifficultyCash({_difficulty}) ? 0
+	set {_random} to random number between 0.9 and 1.1
+	return {_base} + {_difficulty} + {_rarity} * {_random}

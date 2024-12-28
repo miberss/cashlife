@@ -1,0 +1,2 @@
+on leave:
+	delete metadata "coinflip;ingame" of (player, getOpponent(player))

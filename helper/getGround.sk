@@ -1,0 +1,8 @@
+function getGround(l: location, iter: int = 10):: location:
+	loop {_iter} times:
+		set {_l} to {_l} ~ vector(0,-0.2,0)
+		set {_b} to block at {_l}
+		{_b} is not passable
+		set {_h} to {_b}.getBoundingBox().maxY
+		set y coord of {_l} to {_h}
+		return {_l}

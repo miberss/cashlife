@@ -1,0 +1,3 @@
+on shoot:
+	if projectile is an enderpearl:
+		set velocity of projectile to velocity of projectile * 0.6

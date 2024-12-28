@@ -1,0 +1,34 @@
+on script load:
+	set {_item} to newItem(chest, "core")
+	set {_item}'s name to minimessage from "<gradient:#e5533a:#e39950:#e5533a>⧈ CORE ⧈"
+	set {_item}'s lore to getCoreLore(), ""
+	set {_item} to {_item} with item flag hide_enchants
+	set {-core} to {_item}
+	register shapeless recipe:
+		id: "custom:core"
+		result: {_item}
+		category: "core"
+		ingredients:
+			add white banner to ingredients 
+			add furnace to ingredients 
+			add anvil to ingredients 
+			add crafting table to ingredients 
+			add campfire to ingredients 
+			add stone bricks to ingredients 
+			add stone bricks to ingredients 
+			add stone bricks to ingredients 
+			add stone bricks to ingredients 
+
+function getCoreLore():: text component:
+	new string stored in {_lore}:
+		raw ""
+		raw "<#e6e6ed><i> Use this to <reset><#8686e5>protect"
+		raw "<#e6e6ed><i> a <reset><#e5533a>CHUNK<#e6e6ed><i>, and to <reset><#8686e5>activate      "
+		raw "<#e6e6ed><i> your <reset><gradient:#504a9f:#8686e5:#504a9f>♦ Magic Mirror ♦"
+		raw ""
+		raw "<reset><color:#476590>  ℹ <i><color:#e6e6ed>Owning a <reset><color:#8686e5>chunk <i><color:#e6e6ed>is <reset><color:#8686e5>expensive,"
+		raw "<reset><color:#3a567e>  ├ <i>you might dig your self"
+		raw "<reset><color:#3a567e>  ├ <i>a hole by doing this."
+		raw "<reset><color:#3a567e>  ├ <i>Remember, 'Rags to Riches!'"	
+
+	return text component from minimessage from {_lore}

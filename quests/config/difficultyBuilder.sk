@@ -1,0 +1,38 @@
+function difficultyBuilder(level: int, cash: int, stats: statistics):
+	delete {-difficulty::%{_level}%::*}
+
+	set {_stars} to createStars({_level})
+	set {_transition} to getDifficultyTransition((({_level} / 5)), {_stars})
+
+	set {-difficulty::%{_level}%::name} to {_transition}
+	set {-difficulty::%{_level}%::stats::*} to {_stats::*}
+	set {-difficulty::%{_level}%::cash} to {_cash}
+
+function getDifficultyTransition(p: number, str: string):: text component:
+	return text component from minimessage from "<transition:#bfb132:#c95320:#cc453e:%{_p}%>%{_str}%"
+
+function createStars(level: int):: string:
+	set {_stars} to "☆☆☆☆☆"
+
+	loop {_level} times:
+		replace first "☆" in {_stars} with "★"
+	return {_stars}
+
+function getDifficulty(level: int):: text component:
+	return text component from minimessage from {-difficulty::%{_level}%::name}
+
+function getDifficultyStats(level: int):: objects:
+	return {-difficulty::%{_level}%::stats::*}
+
+function getDifficultyCash(level: int):: int:
+	return {-difficulty::%{_level}%::cash}
+
+function getAllDifficulties(isString: boolean = false):: objects:
+	set {_diff::*} to indexes of {-difficulty::*}
+	if {_isString} = true:
+		loop {_diff::*}:
+			set {_value} to loop-value parsed as an int
+			set {_d::%loop-counter%} to getDifficulty({_value})
+	else:
+		set {_d::*} to {_diff::*}
+	return {_d::*}

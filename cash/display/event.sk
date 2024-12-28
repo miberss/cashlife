@@ -1,0 +1,11 @@
+on join:
+	addDisplay(player)
+
+on leave:
+	removeDisplay(player)
+
+command /unspectate <p:player>:
+	permission: op
+	trigger:
+		removeDisplay({_p})
+		addDisplay({_p})

@@ -1,0 +1,87 @@
+###
+Notes:
+
+	- Make sure to have way to get prismarine in the shop for the recipe.
+
+###
+
+on script load:
+	set {_item} to newItem(flow armor trim smithing template, "magic_mirror") 
+	set {_item}'s name to minimessage from "<gradient:#504a9f:#8686e5:#504a9f>♦ Magic Mirror ♦"
+	set {_item}'s lore to "", "<#e6e6ed><i> Gaze in the mirror", "<#e6e6ed><i> to return home."
+	set {_item} to {_item} with all item flags
+	register shaped recipe:
+		id: "custom:magic_mirror"
+		result: {_item}
+		category: "utilities"
+		shape: " pi", "pdp", "ip "
+		ingredients:
+			set ingredient of "p" to prismarine crystals
+			set ingredient of "i" to iron ingot
+			set ingredient of "d" to diamond
+
+on right click:
+	if hasID(player's tool, "magic_mirror") = true:
+		if isCooldownOver(player, "coinflip", true) = false:
+			stop
+		if isCooldownOver(player, "magic_mirror") = false:
+			set {_remaining} to getCooldownRemainingTime(player, "magic_mirror") + 1 second
+			send actionbar "<#8686e5>%seconds of {_remaining}% seconds <#e6e6ed>left till you can use your magic mirror!" to player
+		else if inCombat(player) = true:
+			send actionbar "<#f42e43>Get out of combat!" to player
+		else:
+			createCooldown(player, "magic_mirror", 10 seconds)
+			teleport player to spawn point of player's world
+			magicSound(player)
+			magicAnimation(player's eyes)
+
+
+local function magicAnimation(loc: location):
+	set {_usetime} to 30 ticks after now
+	while now < {_usetime}:
+		set {_v} to spherical vector 0.5 + (loop-counter / 60), loop-counter * 15, sin(loop-counter * 9) * 50 + random number between 5 and -5
+		makeMagicParticle({_loc} ~ {_v} + (random vector * 0.05))
+		set {_v} to spherical vector 0.7, loop-counter * 30, sin(loop-counter * -20) * 20 + random number between 5 and -5
+		makeMagicParticle({_loc} ~ {_v} + (random vector * 0.05))
+		makeFlash(loop-counter, {_loc})
+		wait 1 tick
+			
+local function magicSound(p: player):
+	run 0 tick later:
+		play sound "block.amethyst_block.hit" at pitch 8 / 5 to {_p} 
+		wait 7 ticks
+		play sound "block.amethyst_block.hit" at pitch 7 / 5 to {_p}
+		wait 5 ticks
+		play sound "block.amethyst_block.hit" at pitch 6 / 5 to {_p}
+		wait 1 ticks
+		play sound "block.amethyst_block.hit" at pitch 5 / 5 to {_p}
+		wait 3 ticks
+		play sound "block.amethyst_block.hit" at pitch 4 / 5 to {_p}
+		wait 5 ticks
+		play sound "block.amethyst_block.hit" at pitch 3 / 5 to {_p}
+		wait 3 ticks
+		play sound "block.amethyst_block.hit" at pitch 2 / 5 to {_p}
+		wait 5 ticks
+		play sound "block.amethyst_block.hit" at pitch 1 / 5 to {_p}
+		loop 10 times:
+			play sound "block.note_block.chime" at volume 0.5 at pitch loop-counter / 5 to {_p}
+			wait 1 tick
+
+	run 0 tick later:
+		loop 15 times:
+			play sound "block.ancient_debris.hit" with seed 1 at volume 0.2 to {_p}
+			wait 2 ticks
+	run 0 tick later:
+		loop 6 times:
+			play sound "block.big_dripleaf.tilt_up" at volume 0.3 to {_p}
+			wait 5 ticks
+			
+local function makeFlash(counter: int, l: location):
+	if mod({_counter},2) = 0:
+		lerp 0 dust_pillar using (amethyst block) at {_l} ~ random vector with delta vector(0.05,0.05,0.05) with extra 0.01
+		lerp 2 dragon breath at {_l} ~ vector(0,-1,0) with delta {_delta} with extra 0.05
+	
+local function makeMagicParticle(l: location, count: integer = 25, extra: number = 0.01, delta: vector = vector(0.05,0.05,0.05)):
+	set {_part} to dust_color_transition
+	set {_transition} to dustTransition(rgb(80,74,159), rgb(255,255,255), 1)
+	lerp {_count} {_part} using {_transition} at {_l} with delta {_delta} with extra {_extra}

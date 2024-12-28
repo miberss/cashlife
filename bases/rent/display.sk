@@ -1,0 +1,71 @@
+on script load:
+	loop getAllClaims():
+		set {_chunk} to loop-value
+		set {_owner} to getChunkOwner({_chunk})
+		set {_core}  to getChunkCore({_chunk})
+		set {_above} to {_core} ~ vector(0,1,0)
+		removeRentDisplay({_owner}, {_above})
+		createRentDisplay({_owner}, {_above}, {_core})
+	
+function createRentDisplay(owner: player, loc: location, core: block):
+	set {_display} to spawnRentDisplay({_owner}, {_loc}, {_core})
+	while {_display} is alive:
+		updateRentDisplay({_core}, {_display})
+		wait 1 minute
+
+function removeRentDisplay(owner: player, loc: location):
+	set {_display} to 1st element of text displays in radius 0.01 of {_loc}
+	kill passengers of {_display}
+	kill {_display}
+	delete metadata "tax;display" of {_owner}
+
+function spawnRentDisplay(owner: player, loc: location, core: block):: entity:
+	run function textDisplay and store it in {_e}:
+		location: {_loc}
+		text: getRentDisplayText()
+		scale: vector(1.5,1.5,1)
+		linewidth: 250
+		billboard: vertical
+		seethrough: false
+		shadow: true
+	set (metadata "tax;display" of {_owner}) to {_e}
+	spawn interaction at {_e}:
+		set interaction height of entity to 2
+		make entity ride {_e}
+	return {_e}
+
+function getRentDisplayText():: string:
+	new string stored in {_text}:
+		"<#e6e6ed> [%getCashColor()%[stored_cash]<#e6e6ed>/%getCashColor()%[next_rent]<#e6e6ed>] "
+		nl
+		"[duraratio]"
+		nl
+		"[timeleft]"
+	return {_text}
+
+function getRentDisplay(owner: player):: entity:
+	return metadata "tax;display" of {_owner}
+
+function updateRentDisplay(core: block, display: entity):
+	set {_text} to getRentDisplayText()
+	replace "[stored_cash]" in {_text} with 	"%getStoredCash({_core})%"
+	replace "[next_rent]" in {_text} with 		"%getNextRent({_core})%"
+	set {_dura} to getBlockDurability({_core})
+	set {_initial-dura} to getInitialDurability({_core})
+	set {_ratio} to ({_dura}) / ({_initial-dura}) 
+	set {_message-dura} to getDurabilityTransition({_ratio}, "%{_dura}%")
+	replace "[duraratio]" in {_text} with 		"<#f42e43>⁂ <#8686e5>[%{_message-dura}% | %{_initial-dura}%<#8686e5>] <#f42e43>⁂"
+	set {_time} to minutes of (difference between now and getNextRentTime({_core}))
+	replace "[timeleft]"  in {_text} with 		"<#fcad47>%{_time}%m till this core's%nl%rent is due"
+	set display text of {_display} to {_text}
+
+on right click on a interaction:
+	set {_e} to vehicle of event-entity
+	if {_e} is getRentDisplay(player):
+		if hasID(player's tool, "cheque") = true:
+			set {_cash} to short tag "custom;cash" of custom nbt of player's tool
+			set player's tool to air
+		set {_core} to (block under {_e})
+		addToStoredCash({_core}, {_cash} ? 1)
+		removeCash(player, {_cash} ? 1)
+		updateRentDisplay({_core}, {_e})

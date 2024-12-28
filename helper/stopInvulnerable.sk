@@ -1,0 +1,12 @@
+on join:	
+	player is invulnerable
+	make player vulnerable	
+
+function setInvulnerable(p: players, t: timespan):
+	make ({_p::*}) invulnerable
+	run {_t} later:
+		make ({_p::*}) vulnerable
+
+on damage:
+	if attacker is invulnerable:
+		make attacker vulnerable

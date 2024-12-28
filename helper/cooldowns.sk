@@ -1,0 +1,38 @@
+function setCooldown(player:offlineplayer,cooldownName:string,date:date):
+  if any:
+    {_date} is not set
+    {_date} < now
+  then:
+    delete {cooldown::%uuid of {_player}%::%{_cooldownName}%}
+  else:
+    set {cooldown::%uuid of {_player}%::%{_cooldownName}%} to {_date}
+
+function createCooldown(players:offlineplayers,cooldownName:string,length:timespan):
+  set {_later} to {_length} later
+  loop {_players::*}:
+    setCooldown(loop-value,{_cooldownName},{_later})
+
+function addToCooldown(players:offlineplayers,cooldownName:string,toAdd:timespan):
+  loop {_players::*}:
+    setCooldown(loop-value,{_cooldownName},{_toAdd} after getCooldown(loop-value,{_cooldownName}))
+
+function removeFromCooldown(players:offlineplayers,cooldownName:string,toRemove:timespan):
+  loop {_players::*}:
+    setCooldown(loop-value,{_cooldownName},{_toRemove} before getCooldown(loop-value,{_cooldownName}))
+
+function getCooldown(player:offlineplayer,cooldownName:string) :: date:
+  return {cooldown::%uuid of {_player}%::%{_cooldownName}%}
+
+function isCooldownOver(player:offlineplayer,cooldownName:string,delete:boolean=false) :: boolean:
+  set {_cooldown} to getCooldown({_player},{_cooldownName})
+  if any:
+    {_cooldown} is not set
+    {_cooldown} < now
+  then:
+    if {_delete} is true:
+      setCooldown({_player},{_cooldownName},{_})
+    return true
+  return false
+
+function getCooldownRemainingTime(player:offlineplayer,cooldownName:string) :: timespan:
+  return difference between getCooldown({_player},{_cooldownName}) and now

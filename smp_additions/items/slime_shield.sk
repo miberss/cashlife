@@ -1,0 +1,21 @@
+on script load:
+	set {_item} to newItem(shield, "slime_shield")
+	enchant {_item} with riptide 1
+	set {_item}'s name to "<#5d833a>Slimy Shield"
+	set {_item}'s lore to "", "<#e6e6ed><i> Adds the <#5d833a>knockback <#e6e6ed><i>from", "<#e6e6ed><i> getting hit to the shield."
+	set {_item} to {_item} with item flag hide_enchants
+	register shaped recipe:
+		id: "custom:slime_shield"
+		result: {_item}
+		category: "addons"
+		shape: " a ", "aba", " a "
+		ingredients:
+			set ingredient of "a" to slime ball
+			set ingredient of "b" to shield
+
+on damage:
+	if hasID(victim's active item, "slime_shield") = true:
+		slimeKnockback(victim, attacker)
+
+local function slimeKnockback(v: player, a: location):
+	push {_v} normalized (vector from {_a} to {_v})

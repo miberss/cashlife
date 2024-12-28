@@ -1,0 +1,42 @@
+function rarityBuilder(type: string, color: string, name: string, cash: int, weight: number, statmult: number):
+	delete {-rarity::%{_type}%::*}
+	set {_name} to "[ %{_name}% ]"
+	set {-rarity::%{_type}%::name} to minimessage from "<color:%{_color}%>%stxt({_name})%"
+	set {-rarity::%{_type}%::color} to {_color}
+	set {-rarity::%{_type}%::cash} to {_cash}
+	set {-rarity::%{_type}%::weight} to {_weight}
+	set {-rarity::%{_type}%::statmult} to {_statmult}
+
+function getRarity(type: string):: text component:
+	return {-rarity::%{_type}%::name}
+
+function getRarityCash(type: string):: int:
+	return {-rarity::%{_type}%::cash}
+
+function getRarityColor(type: string):: string:
+	return {-rarity::%{_type}%::color}
+
+function getRarityStatMult(type: string):: number:
+	return {-rarity::%{_type}%::statmult}
+
+function getRarityWeight(type: string):: number:
+	return {-rarity::%{_type}%::weight}
+
+function getRandomRarity():: string:
+	set {_rarity::*} to getAllRarities()
+	loop {_rarity::*}:
+		set {_weight::%loop-counter%} to getRarityWeight(loop-value)
+	set {_random} to random number from 0 to sum({_weight::*})
+	loop {_weight::*}:
+		return {_rarity::%loop-index%} if {_random} < loop-value
+		remove loop-value from {_random}
+
+function getAllRarities(isString: boolean = false):: strings:
+	set {_rar::*} to indexes of {-rarity::*}
+	if {_isString} = true:
+		loop {_rar::*}:
+			set {_value} to loop-value
+			set {_d::%loop-counter%} to getRarity({_value})
+	else:
+		set {_d::*} to {_rar::*}
+	return {_d::*}

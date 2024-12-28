@@ -1,0 +1,7 @@
+function parseChunk(chunk: string):: chunk:
+	# "world:x,y" -> chunk
+	replace ":" in {_chunk} with ","
+	set {_coords::*} to split {_chunk} at ","
+	set {_coords::2} to {_coords::2} parsed as integer
+	set {_coords::3} to {_coords::3} parsed as integer
+	return chunk at {_coords::2}, {_coords::3} in {_coords::1}

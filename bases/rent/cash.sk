@@ -1,0 +1,27 @@
+function startRent(core: block):
+	set {_nbt} to nbt of {_core}
+	set int tag "custom;cashstore" of {_nbt} to 0
+	set int tag "custom;nextrent" of {_nbt} to 50
+	set long tag "custom;nextrenttime" of {_nbt} to unix timestamp of (30 minutes after now)
+
+function increaseRent(core: block):
+	set {_nbt} to nbt of {_core}
+	set {_next} to getNextRent({_core}) ^ 1.1
+	set {_next} to clamp({_next}, 0, 1000)
+	add (getNextRent({_core}) * -1) to int tag "custom;cashstore" of {_nbt} 
+	set int tag "custom;nextrent" of {_nbt} to {_next}
+	set long tag "custom;nextrenttime" of {_nbt} to unix timestamp of (1 minutes after now)
+	set {_owner} to getChunkOwner(chunk at {_core})
+	updateRentDisplay({_core}, {_owner})
+
+function getNextRentTime(core: block):: date:
+	return unix date of (long tag "custom;nextrenttime" of nbt of {_core})
+
+function getNextRent(core: block):: int:
+	return int tag "custom;nextrent" of nbt of {_core}
+
+function getStoredCash(core: block):: int:
+	return int tag "custom;cashstore" of nbt of {_core}
+
+function addToStoredCash(core: block, cash: int):
+	add {_cash} to int tag "custom;cashstore" of nbt of {_core}

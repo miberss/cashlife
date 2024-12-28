@@ -1,0 +1,8 @@
+import:
+    java.lang.Runnable
+
+effect call function %string% [[using|with] arg[s|arguments]] %-objects%:
+    trigger:
+        set {_functions::run} to function reference expr-1 called with expr-2
+        set {_proxy} to new proxy instance of Runnable using {_functions::*} 
+        {_proxy}.run()

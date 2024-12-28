@@ -1,0 +1,116 @@
+function startCoinFlip(p: player, cash: number):
+
+	removeButton({_p})
+	set {_opp} to nearest living entity to {_p}
+	
+	set {_seat::*} to coinFlipLook({_opp},{_p})
+
+	set metadata "coinflip;ingame" of ({_p}, {_opp}) to true 
+	coinflipAnimation({_p},{_opp},{_cash})
+
+	wait 30 ticks
+	delete metadata "coinflip;ingame" of ({_p}, {_opp})
+	kill {_seat::*}
+
+function coinflipAnimation(p: player, opp: entity, cash: integer):
+	set {_mid} to getGround(({_p} ~ ((vector between {_p} and {_opp}) / 2)))
+	spawn item display at {_mid}:
+		set display item of entity to gold ingot
+		set display teleport duration of entity to 1
+		set {_e} to entity
+	coinFlip({_e}, random number between 1 and 6, "%random number between 1.1 and 0.9% seconds" parsed as a timespan, {_p}, {_opp}, {_cash})
+
+function coinFlip(coin: entity, flips: number = 1, duration: timespan = 1 second, p: player, opp: player, cash: integer):
+	set {_start_roll} to 0
+	set {_end_roll} to (3 * {_flips})
+	set {_start_location} to location of {_coin}
+	loop (ticks of {_duration}) times:
+		wait 1 tick
+		set {_progress} to (loop-number / (ticks of {_duration}))
+		
+		set {_vertical_progress} to 4 * {_progress} * (1 - {_progress})
+		set {_vertical_offset} to {_vertical_progress} * 3
+		set {_smooth_progress} to easeInOutCubic({_progress})
+		set {_current_roll} to {_start_roll} + ({_end_roll} - {_start_roll}) * {_smooth_progress}
+		
+		teleport {_coin} to {_start_location} ~ vector(0, {_vertical_offset}, 0) with passengers
+
+		
+		set display interpolation duration of {_coin} to 1
+		set display interpolation start of {_coin} to 0
+		set display left rotation of {_coin} to axisAngle({_current_roll},0,1,0)
+	wait 1 tick
+	teleport {_coin} to {_start_location}
+	set {_final_roll} to mod({_end_roll}, 3)
+	set pitch of {_coin} to 90
+	set display left rotation of {_coin} to axisAngle(0,0,1,0)
+	set metadata "landed" of {_coin} to true
+	if {_final_roll} < 1.5:
+		set {_message} to "Coin landed on Heads!, %{_opp}% won!"
+		addCash({_opp}, {_cash})
+		removeCash({_p}, {_cash})
+	else:
+		set {_message} to "Coin landed on Tails!, %{_p}% won!"
+		addCash({_p}, {_cash})
+		removeCash({_opp}, {_cash})
+	run function textDisplay and store it in {_delete}:
+		location: {_start_location} ~ vector(0,1,0) 
+		text: {_message}
+		lasts: 3 seconds
+	
+	wait 3 seconds
+	kill {_coin}
+
+function coinFlipLook(e: entities):: entities:
+	run function textDisplay and store it in {_seat::1}:
+		location: normalize(getGround({_e::1}, 40))
+		interpolation: 1
+	run function textDisplay and store it in {_seat::2}:
+		location: normalize(getGround({_e::2}, 40))
+		interpolation: 1
+	make {_e::1} ride {_seat::1}
+	make {_e::2} ride {_seat::2}
+	interpolateLook({_e::1}, {_e::2} ~ vector(0,-0.5,0), 0.75 seconds)
+	interpolateLook({_e::2}, {_e::1} ~ vector(0,-0.5,0), 0.75 seconds)
+	return {_seat::*}
+
+on dismount:
+	metadata "coinflip;ingame" of player = true
+	cancel event
+on stop spectating of a text display:
+	metadata "coinflip;ingame" of player = true
+	cancel event
+
+
+function sendCoinFlipRequest(p: player, sender: player, amount: integer):
+	playRequestSound({_p})
+	playSendSound({_sender})
+	createButton({_p}, {_sender}, {_amount})
+	setInvulnerable(({_p}, {_sender}), 5 seconds)
+	createCooldown(({_p}, {_sender}), "coinflip", 5 seconds)
+
+local function playSendSound(p: player):
+	play sound "block.note_block.snare" to {_p}
+	run 0 tick later:
+		loop 5 times:
+			set {_pitch} to 1 - (loop-counter / 6)
+			play sound "block.note_block.harp" at volume 0.5 at pitch {_pitch} to {_p}
+			wait 1 tick
+			set {_pitch} to 1 ^ (loop-counter / 10)
+			play sound "block.note_block.snare" at volume 0.2 at pitch {_pitch} to {_p}
+			wait 1 tick
+	run 0 tick later:
+		loop 8 times:
+			set {_pitch} to (loop-counter) / 5
+			play sound "block.candle.bit" at volume 1 at pitch {_pitch} to {_p}
+			wait 2 tick
+
+
+local function playRequestSound(p: player):
+	play sound "block.note_block.bit" to {_p}
+	loop 3 times:
+		set {_pitch} to (loop-counter) / 3
+		play sound "block.note_block.basedrum" at pitch {_pitch} to {_p}
+		wait 1 tick
+		play sound "block.note_block.bit" at pitch {_pitch} to {_p}
+		wait 1 tick

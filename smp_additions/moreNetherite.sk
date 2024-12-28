@@ -1,0 +1,10 @@
+###
+Ancient Debris will now drop 1 to 3 netherite scraps
+###
+on mine:
+    if event-block = ancient debris:
+        cancel item drops
+        drop (random integer between 1 and 3) of netherite scrap at event-block
+    if event-block is diamond ore or deepslate diamond ore:
+        cancel item drops
+        drop (random integer between 1 and 3) of diamonds at event-block

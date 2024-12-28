@@ -1,0 +1,33 @@
+function getChunkOwner(chunk: chunk):: player:
+	return {claims::%{_chunk}%::owner} parsed as a player
+
+function getChunkCore(chunk: chunk):: block:
+	return {claims::%{_chunk}%::core}
+
+function getPlayerChunk(p: player):: chunk:
+	return {claims::player::%{_p}%}
+
+function deleteClaimData(p: player, chunk: chunk):
+	delete {claims::%{_chunk}%::*}
+	delete {claims::player::%{_p}%} 
+
+function setClaimData(p: player, chunk: chunk, core: block):
+	set {claims::%{_chunk}%::owner} to {_p}'s uuid
+	set {claims::%{_chunk}%::core} to {_core}
+	set {claims::player::%{_p}%} to {_chunk}
+
+function getAllClaims():: chunks:
+	set {_indexes::*} to indexes of {claims::*}
+	remove "player" from {_indexes::*}
+	loop {_indexes::*}:
+		set {_chunks::%loop-counter%} to parseChunk(loop-value)
+	return {_chunks::*}
+
+function isClaimed(p: player, chunk: chunk):: boolean:
+	return whether {claims::%{_chunk}%::owner} is set
+
+function coreInfo(type: string, location: location):
+	run function textDisplay:
+		location: {_location} ~ vector(0,1,0)
+		text: {-core::%{_type}%}
+		lasts: 1 second

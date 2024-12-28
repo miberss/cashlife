@@ -1,0 +1,8 @@
+on script load:
+	set {-core::success_place} to "<#e6e6ed>Successfully <#6ad34c>placed <#8686e5>core<#e6e6ed>!"
+	set {-core::success_removed} to "<#e6e6ed>Successfully <#f42e43>removed <#8686e5>core<#e6e6ed>!"
+
+	set {-core::not_your_core} to "<#f42e43>This is not your core!"
+	set {-core::chunk_claimed} to "<#f42e43>This chunk is already claimed!"
+	set {-core::already_claimed} to "<#f42e43>You already have a claimed chunk"
+	set {-core::middle_chunk} to "<#f42e43>Place closer to the middle of the chunk!"

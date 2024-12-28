@@ -1,0 +1,18 @@
+###
+You can only deal damage with maces
+if you are already in combat with them
+###
+on damage:
+    if all:
+        attacker = a player
+        victim = a player
+        damage != 0
+    then:
+        if attacker's tool != a mace:
+            startCombat(victim, 10 seconds)
+            startCombat(attacker, 10 seconds)
+        else:
+            if inCombat(victim) != true:
+                cancel event
+                play sound "block.anvil.land" at volume 3 at pitch 1 at victim
+                set fall distance of attacker to 0 

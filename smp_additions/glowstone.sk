@@ -1,0 +1,9 @@
+on script load:
+    register new campfire recipe:
+        id: "custom:glowstone"
+        result: glowstone dust
+        input: gunpowder
+        cooktime: 5 second
+        experience: 6
+        group: "glowstone"
+        category: "custom"

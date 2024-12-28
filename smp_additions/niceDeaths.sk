@@ -1,0 +1,36 @@
+###
+fixes tnt minecarts & tnt not giving kill credits
+###
+
+import:
+	org.bukkit.event.block.TNTPrimeEvent
+	org.bukkit.event.entity.EntityPlaceEvent
+
+on TNTPrimeEvent:
+	set {_block} to event.getBlock()
+	wait 1 tick
+	set {_tnt} to nearest tnt to {_block}'s location 
+	set {_entity} to event.getPrimingEntity()
+	if {_entity} is not a player:
+		set {_primingEntity} to metadata "owner" of {_entity}
+	else:
+		set {_primingEntity} to {_entity}
+	set metadata "owner" of {_tnt} to {_primingEntity}
+
+on EntityPlaceEvent:
+	set {_e} to event.getEntity()
+	{_e} is a explosive minecart
+	set metadata "owner" of {_e} to event.getPlayer()
+
+on damage:
+	victim is a explosive minecart
+	set metadata "owner" of victim to attacker
+		
+on death:
+	victim is player
+	set {_owner} to metadata "owner" of attacker
+	if {_owner} is set:
+		if attacker is a explosive minecart:
+			set the death message to "%victim% died to %{_owner}%'s TNT minecart"
+		else:
+			set the death message to "%victim% died to %{_owner}%'s %attacker%"

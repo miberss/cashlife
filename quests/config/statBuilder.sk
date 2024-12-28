@@ -1,0 +1,43 @@
+function statBuilder(stat: statistic, name: string, description: string, base: int = {_}):
+	set {-stat::%{_stat}%::name} to {_name}
+	set {-stat::%{_stat}%::description} to {_description}
+	if {_base} is set:
+		set {-stat::%{_stat}%::base} to {_base}
+
+function getStatBase(stat: statistic):: int:
+	return {-stat::%{_stat}%::base}
+
+function getStatDescription(stat: statistic):: string:
+	return {-stat::%{_stat}%::description}
+
+function getStat(stat: statistic):: string:
+	return {-stat::%{_stat}%::name}
+
+function hasStatExtra(stat: statistic):: boolean:
+	return whether size of indexes of {-stat::%{_stat}%::extra::*} > 0
+
+function getStatExtraDifficulty(stat: statistic, id: string):: int:
+	return {-stat::%{_stat}%::extra::%{_id}%::difficulty}
+
+function getStatExtraBase(stat: statistic, id: string):: int:
+	return {-stat::%{_stat}%::extra::%{_id}%::base}
+	
+function getStatExtraValue(stat: statistic, id: string):: object:
+	return {-stat::%{_stat}%::extra::%{_id}%::value}
+
+function getAllStatExtra(stat: statistic, difficulty: int = {_}):: objects:
+	if {_difficulty} is not set:
+		return indexes of {-stat::%{_stat}%::extra::*}
+	
+	loop indexes of {-stat::%{_stat}%::extra::*}:
+		set {_id} to loop-value
+		if getStatExtraDifficulty({_stat}, {_id}) = {_difficulty}:
+			set {_stats::%loop-counter%} to {_id}
+	return {_stats::*} 
+
+
+function addStatExtra(stat: statistic, value: object, difficulty: int, base: int):
+	set {_id} to mc id of {_value}
+	set {-stat::%{_stat}%::extra::%{_id}%::difficulty} to {_difficulty}
+	set {-stat::%{_stat}%::extra::%{_id}%::base} to {_base}
+	set {-stat::%{_stat}%::extra::%{_id}%::value} to {_value}

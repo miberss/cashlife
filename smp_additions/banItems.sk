@@ -1,0 +1,31 @@
+on inventory click:
+    player is not op
+    removeBannedItem(player's inventory, event-item)
+
+on click:
+    removeBannedItem(player's inventory, player's tool)
+
+function removeBannedItem(inv: inventory, item:item):
+    if {banned::*} contains 1 of {_item}:
+        remove all {_item} from {_inv}
+
+command /banitem <opt:string> [<item:string>]:
+    permission: op
+    trigger:
+        set {_item} to itemtype from namespaced key of {_item}
+        if {_opt} = "add":
+            {banned::*} doesn't contain {_item}
+            add {_item} to {banned::*}
+        else if {_opt} = "remove":
+            remove {_item} from {banned::*}
+        else if {_opt} = "list":
+            send "&5Banned Items:"
+            loop {banned::*}:
+                send "   %loop-counter%. %namespaced key of loop-value%"
+
+on tab complete of "/banitem":
+    set tab completions for position 1 to "add", "remove", "list"
+    if tab arg-1 = "add":
+        set tab completions for position 2 to namespaced key of all itemtypes
+    else if tab arg-1 = "remove":
+        set tab completions for position 2 to namespaced key of {banned::*}

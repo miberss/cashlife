@@ -1,0 +1,14 @@
+import:
+  ch.njol.skript.registrations.Classes
+
+effect debug %object%:
+    parse:
+        set {_expr} to expr-1
+        continue
+    trigger:
+        set {_info::1} to "&c[&7Debug&c] "
+        set {_info::2} to "&7Input: &f%{_expr}%"
+        set {_info::3} to join "&7Output: &f", Classes.toString(expr-1)
+		 # unknown/undefined is for unset variables
+        set {_info::4} to join "&7Type: &f", (skript type of expr-1) ? "Undefined/Unknown"
+        send (join {_info::*} with " ") to player("miberss") and player("boifan")

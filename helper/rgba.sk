@@ -1,0 +1,3 @@
+function rgba(r: num, g: num, b: num, a: num):: bukkit color:
+	set {_a} to ({_a} * 255)
+	return bukkitColor({_a},{_r},{_g},{_b})

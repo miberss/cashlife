@@ -1,0 +1,97 @@
+on right click:
+	if hasID(event-block, "quest_barrel") = true:
+		cancel event
+		if isCooldownOver(player, "quest") is not true:
+			send minimessage from "<color:#e6e6ed>You need to <color:#f42e43>wait %getCooldownRemainingTime(player, "quest")% <color:#e6e6ed>more to redeem a new quest" to player
+			stop
+		createCooldown(player, "quest", 20 minutes)
+		set {_i} to chest inventory with 3 rows named "<#f42e43>• %stxt("QUEST")%"
+		loop (random integer between 2 and 3) times:
+			set slot (random integer between 10 and 16) of {_i} to generateQuest()
+		open {_i} to player
+		
+on mine:
+	if hasID(event-block, "quest_barrel") = true:
+		cancel event
+		
+command resetbarrelcooldown <player>:
+	permission: op
+	trigger:
+		removeFromCooldown(arg-1, "quest", 1 hour)
+
+on right click:
+	redeemQuest(player)
+
+command /cancelquest:
+	trigger:
+		if hasActiveQuest(player) is true:
+			deleteQuest(player)
+			play sound "block.copper_bulb.break" to player
+			send minimessage from "<color:#f42e43>Quest deleted!" to player
+		else:
+			send minimessage from "<color:#e6e6ed>You don't have an active quest!" to player
+			play sound "block.note_block.chime" to {_p}
+
+function redeemQuest(p: player):
+	if custom nbt of {_p}'s tool has nbt tag "custom;reward":
+		if hasActiveQuest({_p}) is false:
+			set {_nbt} to custom nbt of {_p}'s tool
+			set {_reward} to int tag "custom;reward" of {_nbt}
+			set {_statamount} to int tag "custom;statamount" of {_nbt}
+			set {_stat} to string tag "custom;stat" of {_nbt}
+			set {_rarity} to string tag "custom;rarity" of {_nbt}
+			set {_difficulty} to int tag "custom;difficulty" of {_nbt}
+			replace "minecraft:" in {_stat} with ""
+			set {_stat} to {_stat} parsed as a statistic
+			if {_stat} is kill_entity:
+				set {_value} to entity type from key string tag "custom;value" of {_nbt}
+			else:
+				set {_value} to itemtype from key string tag "custom;value" of {_nbt} 
+
+			setQuest({_p}, {_reward}, {_statamount}, {_rarity}, {_difficulty}, {_stat}, {_value})
+			
+			redeemQuestSound({_p})
+
+			set {_p}'s tool to air
+
+		else:
+			set {_t} to text component from minimessage from "<color:#e6e6ed>You have an active quest already going, <color:#f42e43><u>CLICK<reset><color:#e6e6ed> to cancel."
+			set hover event of {_t} to a hover event showing "<#f42e43>You will not get your previous quest item back!"
+			set click event of {_t} to a click event to suggest command "/cancelquest"
+			send component "", {_t}, "" to {_p}
+			play sound "block.decorated_pot.insert_fail" at pitch 0.5 to {_p}
+			
+function redeemQuestSound(p: player):
+	run 0 tick later:
+		play sound "block.note_block.chime" to {_p}
+		wait 6 ticks
+		play sound "block.note_block.chime" to {_p}
+		wait 6 ticks
+		play sound "block.note_block.chime" to {_p}
+		wait 3 ticks
+		play sound "block.note_block.chime" to {_p}
+		wait 3 ticks
+		play sound "block.note_block.chime" to {_p}
+		wait 9 ticks
+		play sound "block.note_block.chime" to {_p}
+	run 0 tick later:
+		set {_pitch} to 1
+		loop 12 times:
+			play sound "block.note_block.basedrum" with volume 1 with pitch {_pitch} to {_p}
+			remove 0.05 from {_pitch}
+			wait 2 tick
+	run 0 tick later:
+		set {_pitch} to 1.2
+		loop 4 times:
+			play sound "block.note_block.bass" at pitch {_pitch} to {_p}
+			wait 12 tick
+			add 0.05 to {_pitch}
+		play sound "block.decorated_pot.insert" to {_p}
+	run 0 tick later:
+		loop 6 times:
+			play sound "block.note_block.bit" to {_p}
+			wait 6 tick
+	wait 30 ticks
+	loop 3 times:
+		play sound "block.note_block.cow_bell" to {_p}
+		wait 2 tick

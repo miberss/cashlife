@@ -1,0 +1,22 @@
+import:
+	org.bukkit.event.world.StructureGrowEvent
+
+on StructureGrowEvent:
+	stopMushroomBreak(...event.getBlocks())
+
+function stopMushroomBreak(blocks: blockstates):
+	loop {_blocks::*}:
+		set {_blockstate} to loop-value
+		if (block of {_blockstate}) != air:
+			run 1 tick later:
+				set (block of {_blockstate}) to air
+
+on explode:
+	loop exploded blocks:
+		if hasID(loop-block, "core") = true:
+			remove loop-block from exploded blocks
+
+on piston extend:
+	loop moved blocks:
+		if hasID(loop-block, "core") = true:
+			cancel event

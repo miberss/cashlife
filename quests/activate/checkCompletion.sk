@@ -1,0 +1,48 @@
+every second:
+	loop all players:
+		checkQuestCompletion(loop-player)
+
+function checkQuestCompletion(p: player):
+	hasActiveQuest({_p}) = true
+	set {_stat} to getQuestStat({_p})
+	set {_value} to getQuestStatValue({_p})
+
+	if {_value} is set:
+		set {_current} to {_stat} stat using {_value} of {_p} 
+	else:
+		set {_current} to {_stat} stat of {_p} 
+
+	set {_end} to getQuestStatEnd({_p})	
+	set {_start} to getQuestStatStart({_p})
+	set {_relative-current} to difference between {_start} and {_current}
+	set {_relative-end} to {_end} - {_start}
+	if {_relative-current} < {_relative-end}:
+		updateQuestBar({_p},{_relative-current},{_relative-end})
+	else:
+		questComplete({_p})
+
+function questComplete(p: player):
+	set {_dif} to getQuestDifficulty({_p})
+	set {_rar} to getQuestRarity({_p})
+	set {_reward} to getQuestReward({_p})
+	send questCompleteMessage({_dif}, {_rar}, {_reward}) to {_p}
+	addCash({_p}, {_reward})
+	deleteQuest({_p})
+	
+function questCompleteMessage(dif: int = 0, rar: string, reward: int = 0):: text component: 
+	set {_stars} to getDifficultyTransition({_dif} / 5, createStars({_dif}))
+	set {_questComplete} to raw "  <u>%{_stars}%<reset> <color:#476590>⏩ <u><b><%getRarityColor({_rar})%>QUEST COMPLETE"
+	set {_cash} to " %getCashColor()% + $ %{_reward}% $"
+	new string stored in {_message}:
+		raw ""
+		raw {_questComplete}
+		raw "<reset>"
+		raw {_cash}
+		raw ""
+		raw "<reset><color:#e6e6ed>   ℹ <i>Get your next quest at "
+		raw "<reset><color:#476590>   ├ <i><color:#e6e6ed>the <color:#8686e5>center <color:#e6e6ed>of the map"
+		raw "<reset><color:#3a567e>   ├ Remember, <i>'Rags to Riches!'"
+		raw ""
+		raw "<reset><%getRarityColor({_rar})%> ⚔ %stxt("GOOD LUCK")%! ⚔ "
+		raw ""
+	return text component from minimessage from {_message}

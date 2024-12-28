@@ -1,0 +1,38 @@
+function textDisplay(location: location, scale: vector = vector(1,1,1), translation: vector = vector(0,0,0), rotation: quaternion = axisAngle(1,0,0,0), transformation: transformation = {_}, width: num = 1, height: num = 1, range: num = 10, interpolation: int = 1, shadow_strength: num = 0, shadow_radius: num = 0, lasts: timespan = {_}, rides: entity = {_}, text: string = "", opacity: num = -1, linewidth: int = 80, billboard: display billboard = center, background: bukkitcolor = bukkitColor(0,0,0,0), shadow: boolean = true, align: textalignment = center_aligned, seethrough: boolean = false):: entity:
+	spawn text display at {_location}:
+		set {_e} to entity 
+		set display transformation of {_e} to {_transformation}
+		set display scale of {_e} to {_scale}
+		set display translation of {_e} to {_translation}
+		set display width of {_e} to {_width}
+		set display height of {_e} to {_height}
+		set display view range of {_e} to {_range}
+		set display teleport duration of {_e} to {_interpolation}
+		set display interpolation start of {_e} to 0
+		set display interpolation duration of {_e} to {_interpolation}
+		set display shadow strength of {_e} to {_shadow_strength}
+		set display shadow radius of {_e} to {_shadow_radius}
+		set display left rotation of {_e} to {_rotation}
+		set display text of {_e} to {_text}
+		set display text opacity of {_e} to {_opacity}
+		set display line width of {_e} to {_linewidth}
+		set display billboard of {_e} to {_billboard}
+		set display text background color of {_e} to {_background}
+		set display text shadowed of {_e} to {_shadow}
+		set display text alignment of {_e} to {_align}
+		set display see thru state of {_e} to {_seethrough}
+		set display brightness of entity to displayBrightness(15,15)
+	if {_lasts} is set:
+		run {_lasts} later:
+			kill {_e}
+	return {_e}
+
+command new_display:
+	trigger:
+		set {_location} to normalize(player)
+		run function textDisplay:	
+			location: {_location}
+			scale: vector(2,2,2)
+			text: "hello!"
+			lasts: 20 ticks
+			background: rgba(255,21,2,0.8)

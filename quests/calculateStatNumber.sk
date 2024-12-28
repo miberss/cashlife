@@ -1,0 +1,4 @@
+function calculateStatMult(stat: statistic, rarity: string):: int:
+	set {_num} to getStatBase({_stat}) * getRarityStatMult({_rarity})
+	set {_num} to {_num} * random number between 1 and 1.2
+	return {_num}

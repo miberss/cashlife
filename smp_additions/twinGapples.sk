@@ -1,0 +1,14 @@
+###
+When crafting gapples, it now gives you 2 instead of 1
+###
+on script load:
+    lock recipe "minecraft:golden_apple" for all players
+    register shaped recipe:
+        id: "custom:golden_apple"
+        result: (2 golden apple)
+        category: "food"
+        shape: "aaa", "aba", "aaa"
+        ingredients:
+            set ingredient of "a" to gold ingot
+            set ingredient of "b" to apple
+    unlock recipe "custom:golden_apple" for all players

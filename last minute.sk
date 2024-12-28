@@ -1,0 +1,23 @@
+command addtoplayerlist <p:offlineplayer>:
+    permission: op
+    trigger:
+        add {_p} to {memberlist::*}
+
+on respawn:
+    wait 1 tick
+    addDisplay(player)
+    setInvulnerable(player, 1 minutes)
+
+command start:
+    permission: op
+    trigger:
+        loop {memberlist::*}:
+            set {_p} to loop-value
+            setCash({_p}, 500)
+            addDisplay({_p})
+
+command restartdisplays:
+    permission: op
+    trigger:
+        loop all players:
+            removeDisplay(loop-player)
